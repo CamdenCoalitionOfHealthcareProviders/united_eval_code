@@ -78,11 +78,12 @@ memb_set_up_baseline_max <- memb_month_count_year_eval %>%
 # Group claims by member ID, year_eval, and then sum claim costs (Claims only)
 memb_claim_cost_by_year_eval <-  c %>%
   filter(PRODUCT_DESC != "MEDICAID - NON-AFDC") %>% 
-  group_by(memb_id, year_eval) %>%
+  group_by(memb_id, year_eval, product_bin) %>%
   summarise(cost_by_year_eval = sum(claim_cost)) %>%
-  left_join(memb_set_up_baseline_max, by = c("memb_id", "year_eval"))
+  left_join(memb_set_up_baseline_max, by = c("memb_id", "year_eval", "product_bin"))
 
 # Add adjusted max monthly cost and risk scores (Members and Claims)
+## IS TOO UCH BEING CAPPED??
 memb_claim_cost_by_year_eval_adj <- memb_claim_cost_by_year_eval %>%
   mutate(cost_per_month_year_eval = cost_by_year_eval/n,
          adjusted_cost_per_month_year_eval =
@@ -96,10 +97,11 @@ memb_claim_cost_by_year_eval_adj <- memb_claim_cost_by_year_eval %>%
 # Calculate adjusted spending
 cost_by_year_eval_adj <- memb_claim_cost_by_year_eval_adj %>%
   group_by(year_eval, product_bin, camden_cchp, baseline_max) %>%
-  summarise(claim_cost = sum(adjusted_cost_per_month_year_eval),
+  summarise(claim_cost = sum(adjusted_cost_per_month_year_eval*n, na.rm = T),
             memb_month_count = sum(n, na.rm = T),
             risk_score = sum(risk_sum, na.rm = T)) %>% 
-  mutate(baseline_max = "63000") %>% 
+  mutate(baseline_max = "63000") %>%
+  filter(is.na(camden_cchp) == F) %>% 
   select(everything(), -memb_month_count, -risk_score)
 
 
