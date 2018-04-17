@@ -252,6 +252,8 @@ m3_update_risk_score <-
 no_new_risk_score <- m3_update_risk_score %>% filter(is.na(risk_score))
 
 # Add updated risk scores to member file
+# Keep the original risk score in cases where the new risk score is missing for that month. 
+# If there is a new risk score available for that member and month, we use the new risk score.
 m4_update_risk_score <- m3_update_risk_score %>% mutate(
   risk_score_update = case_when(
     is.na(risk_score) == TRUE ~ IPRO_RISK_SCORE,
