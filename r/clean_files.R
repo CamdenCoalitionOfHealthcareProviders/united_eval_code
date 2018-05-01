@@ -183,25 +183,23 @@ m <- m %>% mutate(
 
 # "Bin" Medicaid Product Lines --------------------------------------------
 
-m_bin <- m %>% mutate(product_bin =
+m_bin <- m %>% filter(PRODUCT_DESC != "MEDICAID - NON-AFDC") %>%  mutate(product_bin =
                         case_when(
                           PRODUCT_DESC == "CHP (Kids Care)" ~ "TANF/AFDC/CHP/FHP",
                           PRODUCT_DESC == "FHP" ~ "TANF/AFDC/CHP/FHP",
                           PRODUCT_DESC == "HCR Expansion" ~ "HCR Expansion",
                           PRODUCT_DESC == "MCR Dual" ~ "SSI w MCR",
-                          PRODUCT_DESC == "MEDICAID - NON-AFDC" ~ "TANF/AFDC/CHP/FHP",
                           PRODUCT_DESC == "SSI w MCR" ~ "SSI w MCR",
                           PRODUCT_DESC == "SSI w/o MCR" ~ "SSI w/o MCR",
                           PRODUCT_DESC == "TANF/AFDC" ~ "TANF/AFDC/CHP/FHP"
                         ))
 
-c_bin <- c %>% mutate(product_bin =
+c_bin <- c %>% filter(PRODUCT_DESC != "MEDICAID - NON-AFDC") %>% mutate(product_bin =
                         case_when(
                           PRODUCT_DESC == "CHP (Kids Care)" ~ "TANF/AFDC/CHP/FHP",
                           PRODUCT_DESC == "FHP" ~ "TANF/AFDC/CHP/FHP",
                           PRODUCT_DESC == "HCR Expansion" ~ "HCR Expansion",
                           PRODUCT_DESC == "MCR Dual" ~ "SSI w MCR",
-                          PRODUCT_DESC == "MEDICAID - NON-AFDC" ~ "TANF/AFDC/CHP/FHP",
                           PRODUCT_DESC == "SSI w MCR" ~ "SSI w MCR",
                           PRODUCT_DESC == "SSI w/o MCR" ~ "SSI w/o MCR",
                           PRODUCT_DESC == "TANF/AFDC" ~ "TANF/AFDC/CHP/FHP"
@@ -213,17 +211,17 @@ c_bin2 <- c_bin %>% mutate(
   cost_bin = case_when(
     claim_cost < 0 ~ "Negative",
     claim_cost == 0 ~ "0",
-    between(c$claim_cost, 0.01, 9.99) == TRUE ~ "1-9",
-    between(c$claim_cost, 10, 24.99) == TRUE ~ "10-24",
-    between(c$claim_cost, 25, 49.99) == TRUE ~ "25-49",
-    between(c$claim_cost, 50, 99.99) == TRUE ~ "50-99",
-    between(c$claim_cost, 100, 499.99) == TRUE ~ "100-499",
-    between(c$claim_cost, 500, 999.99) == TRUE ~ "500-999",
-    between(c$claim_cost, 1000, 2499.99) == TRUE ~ "1000-2499",
-    between(c$claim_cost, 2500, 4999.99) == TRUE ~ "2500-4999",
-    between(c$claim_cost, 5000, 7499.99) == TRUE ~ "5000-7499",
-    between(c$claim_cost, 7500, 9999.99) == TRUE ~ "7500-9999",
-    claim_cost > 10000 ~ "< 10000"
+    between(claim_cost, 0.01, 9.99) == TRUE ~ "1-9",
+    between(claim_cost, 10, 24.99) == TRUE ~ "10-24",
+    between(claim_cost, 25, 49.99) == TRUE ~ "25-49",
+    between(claim_cost, 50, 99.99) == TRUE ~ "50-99",
+    between(claim_cost, 100, 499.99) == TRUE ~ "100-499",
+    between(claim_cost, 500, 999.99) == TRUE ~ "500-999",
+    between(claim_cost, 1000, 2499.99) == TRUE ~ "1000-2499",
+    between(claim_cost, 2500, 4999.99) == TRUE ~ "2500-4999",
+    between(claim_cost, 5000, 7499.99) == TRUE ~ "5000-7499",
+    between(claim_cost, 7500, 9999.99) == TRUE ~ "7500-9999",
+    claim_cost > 10000 ~ "> 10000"
   )
 )
 
